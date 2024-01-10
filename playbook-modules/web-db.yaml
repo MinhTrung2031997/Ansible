@@ -1,0 +1,45 @@
+
+
+comment: |
+  - Can write this command with playbooks as shown below:
+      ansible webservers -m ansible.builtin.yum -a "name=http state=present" --become 
+  
+  - We can execute a playbook with this command-line:
+      ansible-playbook -i inventory web.db.yaml
+
+  - Debug: 
+      ansible-playbook -i inventory web.db.yaml -v || ansible-playbook -i inventory web.db.yaml -vvvv
+
+  - Check syntax
+      ansible-playbook -i inventory web.db.yaml --syntax-check
+---
+- name: Webserver setup
+  hosts: webservers
+  become: yes
+  tasks: 
+    - name: Installed httpd
+      ansible.builtin.yum: 
+        name: httpd
+        state: present
+    
+    - name: Start service
+      ansible.builtin.yum: 
+        name: httpd
+        state: started
+        enable: yes
+
+- name: DBserver setup
+  hosts: dbservers
+  become: yes
+  tasks: 
+    - name: Installed mariadb-server
+      ansible.builtin.yum: 
+        name: mariadb-server
+        state: present
+
+    - name: Start mariadb service
+      ansible.builtin.yum: 
+        name: started
+        state: present
+        enable: yes
+ 

@@ -1,0 +1,31 @@
+
+
+comment: |
+  - Can write this command with playbooks as shown below:
+      ansible webservers -m ansible.builtin.yum -a "name=http state=present" --become 
+      ansible webservers -m ansible.builtin.copy -a "src=index.html dest=/var/www/html/index.html"
+  
+  - Run:
+      ansible-playbook -i inventory web.yaml
+---
+- name: Webserver setup
+  hosts: webservers
+  become: yes
+  tasks: 
+    - name: Installed httpd
+      ansible.builtin.yum: 
+        name: httpd
+        state: present
+    
+    - name: Start service
+      ansible.builtin.yum: 
+        name: httpd
+        state: started
+        enable: yes
+
+    # copy module
+    - name: Copy index file
+      copy:
+        src: files/index.html
+        dest: /var/www/html/index.html"
+        backup: yes

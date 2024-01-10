@@ -1,0 +1,40 @@
+
+
+comment: |
+  visit: https://docs.ansible.com/ansible/latest/command_guide/intro_adhoc.html#id4
+  - To ensure a package is installed without updating it:
+      ansible web01 -m ansible.builtin.yum -a "name=http state=present" --become (--become: to run with sudo command)
+      ansible webservers -m ansible.builtin.yum -a "name=http state=present" --become 
+  
+  - To remove the package:
+      ansible web01 -m ansible.builtin.yum -a "name=http state=absent" --become
+      ansible webservers -m ansible.builtin.yum -a "name=http state=absent" --become 
+  
+  - Ensure a service is started on all webservers:
+      ansible webservers -m ansible.builtin.yum -a "name=http state=started enable=yes" --become 
+
+all:
+  hosts:
+    web01:
+      ansible_host: ec2-54-226-240-11.compute-1.amazonaws.com
+    web02:
+      ansible_host: ec2-3-208-29-231.compute-1.amazonaws.com
+    db01:
+      ansible_host: ec2-54-196-250-164.compute-1.amazonaws.com
+  children:
+    webservers:
+      hosts:
+        web01:
+        web02:
+    dbservers:
+      hosts:
+        db01:
+    dc_oregon:
+      children:
+        webservers:
+        dbservers:
+      vars: 
+        ansible_user: ec2-user
+        ansible_ssh_private_key_file: clientkey.pem
+
+

@@ -1,0 +1,44 @@
+
+comment: |
+  - We can execute a playbook with this command-line:
+      ansible-playbook -i inventory db.yaml
+---
+- name: DBserver setup
+  hosts: dbservers
+  become: yes
+  tasks: 
+    - name: Installed mariadb-server
+      ansible.builtin.yum: 
+        name: mariadb-server
+        state: present
+    #To fix pymysql
+    - name: Install pymysql 
+      ansible.builtin.yum: 
+        name: python3-PyMySQL
+        state: present
+
+    - name: Start mariadb service
+      ansible.builtin.yum: 
+        name: started
+        state: present
+        enable: yes
+
+    # Database module
+    - name: Create a new database with name 'accounts'
+      community.mysql.mysql_db:
+        name: accounts
+        state: present
+        login_unix_socket: /var/lib/mysql/mysql.sock
+
+    - name: Create a new database with name 'vprofile'
+      community.mysql.mysql_user:
+        name: vprofile
+        password: 12345
+        priv: '*.*:ALL'
+        state: present
+        login_unix_socket: /var/lib/mysql/mysql.sock
+
+
+# Fix the python error:
+  # login to the db instance
+  # use command to get Python package: yum search python | grep -i mysql
