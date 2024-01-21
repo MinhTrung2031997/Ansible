@@ -1,0 +1,23 @@
+comment: |
+  ansible -m setup web01(so see the instance's configuration)
+  ansible-playbook print_facts
+---
+- name: Print facts
+  hosts: all
+  #gather_facts: false (Can not find the ansible_distribution variable)
+  tasks:
+    - name: Print OS name
+      debug:
+        var: ansible_distribution
+
+    - name: Print selinux mode
+      debug:
+        var: ansible_selinux.mode
+
+    - name: Print RAM memory
+      debug:
+        var: ansible_memory_mb_real.free
+
+    - name: Print Processor name
+      debug:
+        var: ansible_processor[2]

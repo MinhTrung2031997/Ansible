@@ -1,0 +1,30 @@
+comment: |
+  ansible -m setup web01(so see the instance's configuration)
+  
+  ansible-playbook vars_precedence.yaml
+---
+- name: Understanding vars
+  hosts: all
+  become: yes
+  gather_facts: false
+  vars:
+    USRNM: playuser
+    COMM: variable from playbook
+  tasks:
+    - name: create user
+      ansible.builtin.user:
+        name: "{{USRNM}}"
+        comment: "{{COMM}}"
+      register: usrout
+
+    - debug:
+      var: usrout
+
+    - debug:
+      var: usrout.name
+
+    - debug:
+      var: usrout.comment
+
+# One option to pass the variable with command:
+  ansible-playbook -e USRNM=cliuser -e COMM=cliuser vars_precedence.yaml
